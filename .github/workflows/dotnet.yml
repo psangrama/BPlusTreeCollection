@@ -12,20 +12,24 @@ on:
 jobs:
   build:
     env:
-      BUILD_CONFIG: 'Release'
-      SOLUTION: 'src/MySolution.sln'
+      build_config: 'Release'
+      woring_directory: ./src
     
     runs-on: ubuntu-latest
-
+       
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+    - name: Set working directory
+      run: ls-R 
+      working-directory: ${{env.working_directory}}
+    
     - name: Restore dependencies
-      run: dotnet restore $SOLUTION
+      run: dotnet restore
     - name: Build
-      run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+      run: dotnet build --configuration ${{env.build_config}} --no-restore
     - name: Execute Test
       run: dotnet test --no-build --verbosity normal
