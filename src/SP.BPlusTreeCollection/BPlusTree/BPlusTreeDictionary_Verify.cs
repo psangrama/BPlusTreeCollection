@@ -1,13 +1,8 @@
 ﻿using SP.BPlusTreeCollection.Nodes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SP.BPlusTreeCollection.BPlusTree
 {
-	public partial class BPlusTreeDictionary<TKey, TValue>
+    public partial class BPlusTreeDictionary<TKey, TValue>
 	{
 		/// <summary>
 		/// Verify if the BPlusTree is accurate. Ensures, number of keys in a node should be less than the minimum node size

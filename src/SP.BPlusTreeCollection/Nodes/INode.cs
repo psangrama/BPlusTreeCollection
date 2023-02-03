@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SP.BPlusTreeCollection.Nodes
+﻿namespace SP.BPlusTreeCollection.Nodes
 {
-	public interface INode<TKey, TValue>
+    public interface INode<TKey, TValue>
 	{
 		List<TKey> Keys { get; }
 		INode<TKey, TValue> Split(List<INode<TKey, TValue>> AllLeafNodes);

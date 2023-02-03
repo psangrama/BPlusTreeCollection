@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SP.BPlusTreeCollection.Nodes
+﻿namespace SP.BPlusTreeCollection.Nodes
 {
-	public static class Constants
+    public static class Constants
 	{
 		public const int NodeSize = 1024;
 		public const int MinNodeSize = NodeSize / 2;

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SP.BPlusTreeCollection.Nodes
+﻿namespace SP.BPlusTreeCollection.Nodes
 {
-	public class Internal<TKey, TValue> : INode<TKey, TValue>, IEnumerable<INode<TKey, TValue>>
+    public class Internal<TKey, TValue> : INode<TKey, TValue>, IEnumerable<INode<TKey, TValue>>
 	{
 		public Internal()
 		{

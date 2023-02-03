@@ -1,11 +1,9 @@
 ﻿using SP.BPlusTreeCollection.Nodes;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace SP.BPlusTreeCollection.BPlusTree
 {
-	public partial class BPlusTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+    public partial class BPlusTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 	{
 		internal List<INode<TKey, TValue>> _allLeafNodes = new List<INode<TKey, TValue>>();
 

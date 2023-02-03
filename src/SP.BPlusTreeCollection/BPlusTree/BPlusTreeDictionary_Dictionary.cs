@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SP.BPlusTreeCollection.BPlusTree
+﻿namespace SP.BPlusTreeCollection.BPlusTree
 {
-	public partial class BPlusTreeDictionary<TKey, TValue>
+    public partial class BPlusTreeDictionary<TKey, TValue>
 	{
 		public ICollection<TKey> Keys
 		{

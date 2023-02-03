@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace SP.BPlusTreeCollection.Nodes
 {
-	public class Leaf<TKey, TValue> : INode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>
+    public class Leaf<TKey, TValue> : INode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>
 	{
 		//List<TValue> Values = new List<TValue>();
 		public List<TKey> Keys { get; private set; }
