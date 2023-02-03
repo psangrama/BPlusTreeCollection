@@ -24,7 +24,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Set working directory
-      run: ls-R 
+      run: ls -R 
       working-directory: ${{env.working_directory}}
     
     - name: Restore dependencies
