@@ -32,7 +32,7 @@ jobs:
       shell: pwsh
       
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v3.4.3
+      uses: NuGet/setup-nuget@v1.0.5
       
     - uses: actions/checkout@v3
     - name: Setup .NET
