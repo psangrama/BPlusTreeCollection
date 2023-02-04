@@ -44,7 +44,7 @@ jobs:
       shell: pwsh
       
     - name: Build
-      run: dotnet build --configuration ${{env.build_config}} -p:Version=$BUILD_VERSION --no-restore
+      run: dotnet build --configuration ${{env.build_config}} --no-restore
       
     - name: Execute Test
       run: dotnet test --configuration ${{env.build_config}} --no-build --verbosity normal
