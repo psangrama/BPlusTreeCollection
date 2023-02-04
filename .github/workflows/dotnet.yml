@@ -13,7 +13,7 @@ jobs:
   build:
     env:
       build_config: 'Release'
-      woring_directory: ./src
+      woring_directory: src
       solution: 'BPlusTreeCollection.sln'
     
     runs-on: ubuntu-latest
