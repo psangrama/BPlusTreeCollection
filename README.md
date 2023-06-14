@@ -11,7 +11,8 @@ A B+ tree is an advanced form of a self-balancing tree in which all the values a
 	3. The leaf nodes of a B+ tree are linked together in the form of a singly linked lists to make the search queries more efficient.
 
 # How it works?
-![image](https://github.com/psangrama/BPlusTreeCollection/assets/113549457/92ddfa2e-bdf4-4297-9c75-42aad555a66b)
+
+![image](https://github.com/psangrama/BPlusTreeCollection/assets/113549457/f0ad8ec8-b117-4f94-8f88-0421d0ae81c7)
 
 Better visualization for understanding, refer https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
 
