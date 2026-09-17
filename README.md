@@ -241,7 +241,11 @@ dotnet build -c Release
 dotnet test -c Release
 ```
 
-Requires the [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later. `dotnet build` also produces the NuGet package under `SP.BPlusTreeCollection/bin/Release/`.
+Requires the [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later. To build the NuGet package locally:
+
+```bash
+dotnet pack SP.BPlusTreeCollection/SP.BPlusTreeCollection.csproj -c Release -o ../artifacts
+```
 
 ### Tests and coverage
 

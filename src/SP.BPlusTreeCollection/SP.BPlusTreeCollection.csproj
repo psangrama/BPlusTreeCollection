@@ -4,22 +4,44 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<Version>1.0.0.0</Version>
-	<Authors>Sangrama Keshari Pattanayak</Authors>
-	<Product>BPlusTreeCollection</Product>
-	<Description>This is an extended version of IDictionary and created to stote the values in a sorted order using BPlusTree algorithm. Primary aim is to store the data efficiently in a performant way and search will be much quicker. 
-Primary aimbition behind creating this, SortedList search will be faster as it uses binary search but inserting data into it is inefficient takes very long. Same way dictionary is very slow in data load and search. Hence BPlusTreeCollection is created to efficiently store the data into it with faster search using binary tree mechanism.</Description>
-	<Copyright>OpenSource</Copyright>
-	<RepositoryUrl>https://github.com/psangrama/BPlusTreeCollection</RepositoryUrl>
-	<RepositoryType>Open Source</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Not every public member carries XML docs yet; don't fail CI over it. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <PackageId>SP.BPlusTreeCollection</PackageId>
+    <!-- Overridden by the release workflow with -p:Version from the git tag. -->
+    <Version>1.0.0</Version>
+    <Authors>Sangrama Keshari Pattanayak</Authors>
+    <Product>BPlusTreeCollection</Product>
+    <Title>BPlusTreeCollection</Title>
+    <Description>A sorted, in-memory IDictionary&lt;TKey, TValue&gt; for .NET backed by a B+ tree, built for collections that are loaded at runtime and then queried repeatedly.
+
+At 450,000 keys it loads roughly 100x faster than SortedList while using the same memory, and beats SortedDictionary on load time, memory, exact lookup and range search alike. Values live at the leaf level and leaves are kept in key order, so inserts stay local to one node and range queries become a forward walk over a sorted, indexable leaf list instead of one lookup per key.</Description>
+    <PackageTags>bplustree;b+tree;collection;dictionary;sorted;sorteddictionary;sortedlist;range-search;data-structures;performance</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/psangrama/BPlusTreeCollection</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/psangrama/BPlusTreeCollection</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>Copyright (c) Sangrama Pattanayak</Copyright>
+  </PropertyGroup>
+
+  <!-- Source Link: ship symbols and let consumers step into the source.
+       The .NET SDK has Source Link built in, so no package reference is needed. -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- Deterministic output when built by CI. -->
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Build\**" />
-    <EmbeddedResource Remove="Build\**" />
-    <None Remove="Build\**" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
-</Project>
 
+</Project>

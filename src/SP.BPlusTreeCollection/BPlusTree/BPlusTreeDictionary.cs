@@ -35,7 +35,7 @@ namespace SP.BPlusTreeCollection.BPlusTree
 		/// This enumerates and returns the IEnumerable of KeyValuePair. This is EXTREMELY SLOW in terms of performance. 
 		/// It's not recommended to use. 
 		/// </summary>
-		/// <returns>IEnumerator<KeyValuePair<TKey, TValue>></returns>
+		/// <returns>An <see cref="IEnumerator{T}"/> over the key/value pairs, in key order.</returns>
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
 			if (root == null) yield break;
