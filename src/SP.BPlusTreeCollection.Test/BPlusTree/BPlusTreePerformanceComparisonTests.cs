@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace SP.BPlusTreeCollection.Test.BPlusTree
 {
 	[TestClass]
+	[TestCategory("Long")] // 450k-record fixtures; excluded from the fast CI run
 	public class BPlusTreePerformanceComparisonTests
 	{
 		// Initiate logger

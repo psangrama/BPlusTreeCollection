@@ -310,6 +310,7 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 		private const int _multiLevelItemCount = 1_500_000;
 
 		[TestMethod]
+		[TestCategory("Long")] // builds a 1.5M-key tree to reach depth 3
 		public void MultiLevelTree_LoadRemoveAndVerify_KeepsTreeConsistent()
 		{
 			var _tree = new BPlusTreeDictionary<int, int>();
@@ -349,6 +350,7 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 		}
 
 		[TestMethod]
+		[TestCategory("Long")] // builds a 1.5M-key tree to reach depth 3
 		public void MultiLevelTree_LeafNodesRemainInKeyOrder()
 		{
 			var _tree = new BPlusTreeDictionary<int, int>();

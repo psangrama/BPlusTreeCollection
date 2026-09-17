@@ -1,6 +1,6 @@
 # BPlusTreeCollection
 
-[![.NET](https://github.com/psangrama/BPlusTreeCollection/actions/workflows/dotnet.yml/badge.svg)](https://github.com/psangrama/BPlusTreeCollection/actions/workflows/dotnet.yml)
+[![CI](https://github.com/psangrama/BPlusTreeCollection/actions/workflows/ci.yml/badge.svg)](https://github.com/psangrama/BPlusTreeCollection/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 `BPlusTreeCollection` is a sorted, in-memory `IDictionary<TKey, TValue>` implementation
@@ -257,8 +257,20 @@ dotnet test -c Release --collect:"XPlat Code Coverage"
 Because a node holds 1024 children, a tree only grows past two levels at roughly 1.5M
 keys — so the internal-node split, merge and borrow paths are only reachable at that
 scale. `MultiLevelTree_LoadRemoveAndVerify_KeepsTreeConsistent` and
-`MultiLevelTree_LeafNodesRemainInKeyOrder` build trees that large deliberately, which is
-why a full run takes around 16 minutes.
+`MultiLevelTree_LeafNodesRemainInKeyOrder` build trees that large deliberately, and the
+benchmark suite loads 450,000 records per collection. A full run therefore takes around
+16 minutes.
+
+Those tests carry `[TestCategory("Long")]`, so day-to-day you can skip them:
+
+```bash
+dotnet test -c Release --filter "TestCategory!=Long"   # a few seconds
+```
+
+CI does the same: [`ci.yml`](.github/workflows/ci.yml) runs the fast tests on every push
+and pull request, and runs the full suite nightly and on demand. Note that the fast
+subset alone covers 78.7% line / 70.6% branch — the 93.5% figure requires the long tests,
+so the nightly run is the one to trust for coverage.
 
 ## Repository layout
 
@@ -268,7 +280,6 @@ src/
     BPlusTree/                     # BPlusTreeDictionary, split across partial classes
     Nodes/                         # INode, Leaf, Internal, Constants
   SP.BPlusTreeCollection.Test/     # MSTest functional + performance suites
-  Build/                           # GetBuildVersion.psm1, used by CI
 ```
 
 ## Contributing
