@@ -90,7 +90,6 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 		#region Load Performance
 
 		[TestMethod()]
-		[Timeout(TestTimeout.Infinite)]
 		public void LoadPerformance_SortedList()
 		{
 			// Collect memory after GC ran
@@ -117,14 +116,16 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 			//var _x = _sortedListLocal.Where(x => x.Key == 39.2373600900);
 
 			// Memory usage 
+			// Keep the collection rooted: without this the JIT can treat it as dead
+			// before the sample is taken, and the measured delta collapses to noise.
 			_memUtilizedSortedList = GC.GetTotalMemory(true) - gc;
+			GC.KeepAlive(_sortedListLocal);
 
 			Console.WriteLine($"SortedList took {_sortedListLoadTime} to insert {_totalRows} records to memory and occupied memory: {(_memUtilizedSortedList / 1048576.0):#,#.##} MB");
 			_log.Info($"SortedList took {_sortedListLoadTime} to insert {_totalRows} records to memory and occupied memory: {(_memUtilizedSortedList / 1048576.0):#,#.##} MB");
 		}
 
 		[TestMethod()]
-		[Timeout(TestTimeout.Infinite)]
 		public void LoadPerformance_SortedDictionary()
 		{
 			// Collect memory after GC ran
@@ -150,14 +151,16 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 			_sortedDictionaryLoadTime = stopWatch.Elapsed;
 
 			// Memory usage 
+			// Keep the collection rooted: without this the JIT can treat it as dead
+			// before the sample is taken, and the measured delta collapses to noise.
 			_memUtilizedSortedDictionary = GC.GetTotalMemory(true) - gc;
+			GC.KeepAlive(_sortedDictLocal);
 
 			Console.WriteLine($"SortedDictionary took {_sortedDictionaryLoadTime} to insert {_totalRows} records to memory and occupied memory: {(_memUtilizedSortedDictionary / 1048576.0):#,#.##} MB");
 			_log.Info($"SortedDictionary took {_sortedDictionaryLoadTime} to insert {_totalRows} records to memory and occupied memory: {(_memUtilizedSortedDictionary / 1048576.0):#,#.##} MB");
 		}
 
 		[TestMethod()]
-		[Timeout(TestTimeout.Infinite)]
 		public void LoadPerformance_BPlusTreeDictionary()
 		{
 			// Collect memory after GC ran
@@ -183,7 +186,10 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 			_bplusTreeDictionaryLoadTime = stopWatch.Elapsed;
 
 			// Memory usage 
+			// Keep the collection rooted: without this the JIT can treat it as dead
+			// before the sample is taken, and the measured delta collapses to noise.
 			_memUtilizedBPlusTreeDictionary = GC.GetTotalMemory(true) - gc;
+			GC.KeepAlive(_bplusTreeDictLocal);
 
 			Console.WriteLine($"BPlusTreeDictionary took {_bplusTreeDictionaryLoadTime} to insert {_totalRows} records to memory and occupied memory: {(_memUtilizedBPlusTreeDictionary / 1048576.0):#,#.##} MB");
 			_log.Info($"BPlusTreeDictionary took {_bplusTreeDictionaryLoadTime} to insert {_totalRows} records to memory and occupied memory: {(_memUtilizedBPlusTreeDictionary / 1048576.0):#,#.##} MB");
@@ -348,7 +354,7 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 
 		#region Range Find Performance
 
-		//[TestMethod]
+		[TestMethod]
 		public void RangeFindPerformance_SortedDictionary()
 		{
 			var stopWatch = Stopwatch.StartNew();

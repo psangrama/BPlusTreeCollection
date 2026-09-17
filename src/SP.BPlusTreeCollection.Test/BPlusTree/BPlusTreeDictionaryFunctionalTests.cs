@@ -302,5 +302,182 @@ namespace SP.BPlusTreeCollection.Test.BPlusTree
 			Assert.AreEqual(0, _intbpTreeDictionary.First()); // As the collection is cleared, it should return default
 			Assert.AreEqual(0, _intbpTreeDictionary.Last()); // As the collection is cleared, it should return default
 		}
+		#region Multi-level tree (depth 3+)
+
+		// A root internal node holds up to Constants.NodeSize children, so a tree only
+		// grows past two levels at roughly 1.5M keys. Every test below 1024 leaves
+		// therefore never exercises internal-node splitting, merging or borrowing.
+		private const int _multiLevelItemCount = 1_500_000;
+
+		[TestMethod]
+		public void MultiLevelTree_LoadRemoveAndVerify_KeepsTreeConsistent()
+		{
+			var _tree = new BPlusTreeDictionary<int, int>();
+			var _keys = Enumerable.Range(0, _multiLevelItemCount).ToList();
+			_keys.Shuffle();
+
+			foreach (var _key in _keys)
+				_tree.Add(_key, _key);
+
+			// Guard the premise of this test: the tree must actually be more than two levels deep.
+			var _internalNodes = _tree.Nodes.Count(x => x.NodeType != "leaf");
+			Assert.IsTrue(_internalNodes > 1, $"Expected a multi-level tree, but found {_internalNodes} internal node(s).");
+			Assert.AreEqual(_multiLevelItemCount, _tree.Count);
+
+			_tree.Verify();
+
+			foreach (var _key in _keys)
+			{
+				Assert.IsTrue(_tree.TryGetValue(_key, out var _value), $"Key {_key} missing after load.");
+				Assert.AreEqual(_key, _value);
+			}
+
+			// Remove 60% of the keys to force merges and borrows at the internal level.
+			var _removeCount = (int)(_multiLevelItemCount * 0.6);
+			for (int i = 0; i < _removeCount; i++)
+				_tree.Remove(_keys[i]);
+
+			Assert.AreEqual(_multiLevelItemCount - _removeCount, _tree.Count);
+
+			_tree.Verify();
+
+			for (int i = 0; i < _removeCount; i++)
+				Assert.IsFalse(_tree.TryGetValue(_keys[i], out _), $"Key {_keys[i]} still present after removal.");
+
+			for (int i = _removeCount; i < _multiLevelItemCount; i++)
+				Assert.IsTrue(_tree.TryGetValue(_keys[i], out _), $"Key {_keys[i]} lost during removal of other keys.");
+		}
+
+		[TestMethod]
+		public void MultiLevelTree_LeafNodesRemainInKeyOrder()
+		{
+			var _tree = new BPlusTreeDictionary<int, int>();
+			var _keys = Enumerable.Range(0, _multiLevelItemCount).ToList();
+			_keys.Shuffle();
+
+			foreach (var _key in _keys)
+				_tree.Add(_key, _key);
+
+			AssertLeavesAreOrdered(_tree);
+
+			_keys.Shuffle();
+			for (int i = 0; i < _multiLevelItemCount / 2; i++)
+				_tree.Remove(_keys[i]);
+
+			AssertLeavesAreOrdered(_tree);
+		}
+
+		private static void AssertLeavesAreOrdered(BPlusTreeDictionary<int, int> tree)
+		{
+			var _leaves = tree.LeafNodes;
+			for (int i = 1; i < _leaves.Count; i++)
+			{
+				if (_leaves[i - 1].Count == 0 || _leaves[i].Count == 0)
+					continue;
+
+				var _previousLast = _leaves[i - 1].Keys[_leaves[i - 1].Count - 1];
+				var _currentFirst = _leaves[i].Keys[0];
+				Assert.IsTrue(_previousLast < _currentFirst,
+					$"Leaf {i - 1} ends at {_previousLast} but leaf {i} starts at {_currentFirst}.");
+			}
+		}
+
+		#endregion
+
+		#region IDictionary contract
+
+		[TestMethod]
+		public void Keys_And_Values_AreDeliberatelyNotImplemented()
+		{
+			var _tree = new BPlusTreeDictionary<int, int>();
+			_tree.Add(1, 1);
+
+			Assert.Throws<NotImplementedException>(() => _ = _tree.Keys);
+			Assert.Throws<NotImplementedException>(() => _ = _tree.Values);
+		}
+
+		[TestMethod]
+		public void Indexer_Get_ReturnsValue_AndDefaultWhenKeyIsAbsent()
+		{
+			var _tree = new BPlusTreeDictionary<int, string>();
+			_tree[7] = "seven"; // setter routes to Add
+
+			Assert.AreEqual("seven", _tree[7]);
+			Assert.IsNull(_tree[42]); // absent key yields default, it does not throw
+		}
+
+		[TestMethod]
+		public void AddKeyValuePair_And_Contains_And_RemoveKeyValuePair()
+		{
+			var _tree = new BPlusTreeDictionary<int, string>();
+			_tree.Add(new KeyValuePair<int, string>(1, "one"));
+			_tree.Add(new KeyValuePair<int, string>(2, "two"));
+
+			Assert.IsTrue(_tree.Contains(new KeyValuePair<int, string>(1, "one")));
+			Assert.IsFalse(_tree.Contains(new KeyValuePair<int, string>(3, "three")));
+			Assert.IsFalse(_tree.IsReadOnly);
+
+			Assert.IsTrue(_tree.Remove(new KeyValuePair<int, string>(1, "one")));
+			Assert.IsFalse(_tree.ContainsKey(1));
+			Assert.IsTrue(_tree.ContainsKey(2));
+		}
+
+		[TestMethod]
+		public void CopyTo_WritesPairsIntoTargetArrayAtOffset()
+		{
+			var _tree = new BPlusTreeDictionary<int, string>();
+			for (int i = 0; i < 5; i++)
+				_tree.Add(i, $"{i}v");
+
+			var _target = new KeyValuePair<int, string>[7];
+			_tree.CopyTo(_target, 2);
+
+			Assert.AreEqual(default, _target[0]);
+			Assert.AreEqual(default, _target[1]);
+			for (int i = 0; i < 5; i++)
+				Assert.AreEqual(new KeyValuePair<int, string>(i, $"{i}v"), _target[i + 2]);
+		}
+
+		[TestMethod]
+		public void Enumerator_YieldsEveryPairInKeyOrder()
+		{
+			var _tree = new BPlusTreeDictionary<int, int>();
+			var _keys = Enumerable.Range(0, 5000).ToList();
+			_keys.Shuffle();
+
+			foreach (var _key in _keys)
+				_tree.Add(_key, _key * 2);
+
+			var _enumerated = _tree.ToList(); // exercises the generic enumerator
+			Assert.AreEqual(5000, _enumerated.Count);
+			for (int i = 0; i < 5000; i++)
+			{
+				Assert.AreEqual(i, _enumerated[i].Key);
+				Assert.AreEqual(i * 2, _enumerated[i].Value);
+			}
+
+			// non-generic IEnumerable path
+			var _nonGenericCount = 0;
+			foreach (var _ in (System.Collections.IEnumerable)_tree)
+				_nonGenericCount++;
+			Assert.AreEqual(5000, _nonGenericCount);
+		}
+
+		[TestMethod]
+		public void RemoveLastKey_FromRootLeaf_EmptiesTheTree()
+		{
+			var _tree = new BPlusTreeDictionary<int, int>();
+			_tree.Add(1, 1);
+			_tree.Add(2, 2);
+
+			_tree.Remove(1);
+			_tree.Remove(2);
+
+			Assert.AreEqual(0, _tree.Count);
+			Assert.IsFalse(_tree.TryGetValue(1, out _));
+			Assert.IsFalse(_tree.TryGetValue(2, out _));
+		}
+
+		#endregion
 	}
 }
